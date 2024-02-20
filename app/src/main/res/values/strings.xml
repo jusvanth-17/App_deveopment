@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Ex1</string>
+    <string name="my_first_app">My First App</string>
+    <string name="next_page">Next Page</string>
+    <string name="Frames">Frames App</string>
+    <string name="constraint_layout">Constraint Layout</string>
+    <string name="Swiggy">Swiggy</string>
+    <string name="click_to_order">Click to Order</string>
+    <string name="select_your_oder">Select your Oder...</string>
+    <string name="dosa">Dosa</string>
+    <string name="pongal">Pongal</string>
+    <string name="vada">Vada</string>
+    <string name="button_dosa">Dosa</string>
+    <string name="button_idly">Idly</string>
+
+
+    <string name="place_order">Place Order</string>
+    <string name="the_item_you_re_selected">The Item You\'re selected...</string>
+    <string name="rs_50">Rs. 50</string>
+    <string name="confirm_order">Confirm Order</string>
+    <string name="empty">"                                            "</string>
+    <string name="enter_your_details">Enter Your Details</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="submit">Submit</string>
+    <string name="Idly">Idly</string>
+</resources>

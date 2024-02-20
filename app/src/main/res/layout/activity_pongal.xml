@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:gravity="center"
+tools:context=".Dosa"
+android:layout_margin="20dp">
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/the_item_you_re_selected"
+    android:textColor="@color/black"
+    android:textSize="25sp"
+    android:textStyle="bold"
+    android:layout_gravity="center"
+    android:layout_marginTop="60dp"
+    />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:orientation="horizontal"
+    android:layout_marginTop="60dp"
+    android:layout_marginBottom="60dp"
+    >
+
+    <TextView
+        android:id="@+id/selectedTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pongal"
+        android:padding="20dp"
+        android:layout_weight="1"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/prize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rs.30"
+        android:padding="20dp"
+        android:layout_weight="1"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        />
+
+</LinearLayout>
+
+<Button
+    android:id="@+id/btnPongal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/confirm_order"
+    android:layout_gravity="center"/>
+
+</LinearLayout>
