@@ -4,7 +4,7 @@ import os
 from typing import Dict, Any
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -51,4 +51,16 @@ def generate_lesson(req: GenerateLessonRequest):
         return JSONResponse(content=result)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/download/backend")
+def download_backend() -> FileResponse:
+    file_path = "/workspace/language-backend.tgz"
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="archive not found")
+    return FileResponse(
+        path=file_path,
+        media_type="application/gzip",
+        filename="language-backend.tgz",
+    )
 
