@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     # Third-party services
     openai_api_key: Optional[str] = None
     stripe_api_key: Optional[str] = None
+    elevenlabs_api_key: Optional[str] = None
+    elevenlabs_default_voice_id: Optional[str] = Field(default=None)
+    elevenlabs_model_id: str = Field(default="eleven_multilingual_v2")
 
     # Monitoring
     sentry_dsn: Optional[str] = None
