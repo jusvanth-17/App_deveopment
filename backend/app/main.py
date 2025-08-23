@@ -11,6 +11,8 @@ from app.api.routes.stt import router as stt_router
 from app.api.routes.correct import router as correct_router
 from app.api.routes.conversation import router as conversation_router
 from app.api.routes.web_demo import router as web_demo_router
+from app.api.routes.syllabus import router as syllabus_router
+from app.api.routes.lessons import router as lessons_router
 
 
 def create_app() -> FastAPI:
@@ -34,6 +36,8 @@ def create_app() -> FastAPI:
     app.include_router(correct_router, prefix="/api")
     app.include_router(conversation_router, prefix="/api")
     app.include_router(web_demo_router)
+    app.include_router(syllabus_router, prefix="/api")
+    app.include_router(lessons_router, prefix="/api")
 
     @app.on_event("startup")
     def on_startup() -> None:
