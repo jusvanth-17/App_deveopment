@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 100
+target-version = ["py313"]
+
+[tool.ruff]
+line-length = 100
+fix = true
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["app"]
+asyncio_mode = "auto"

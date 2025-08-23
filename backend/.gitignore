@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.secrets/
+.secrets.json
+.secrets/*
+.coverage
+.pytest_cache/
+artifacts/
+.secrets/**
+secrets/
