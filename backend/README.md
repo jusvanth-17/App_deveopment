@@ -305,3 +305,20 @@ If it worked, your server is running at `http://localhost:8000`.
 - For voice 1:1: send audio to `POST /api/conversation/voice-reply` and play the returned `audio_b64`.
 
 If something goes wrong, scroll up to “Troubleshooting”. It lists the most common fixes in plain words.
+
+---
+
+## 14) Screenshots & Visual Guide
+See `docs/SCREENSHOTS.md` for a click-by-click checklist with image placeholders. Drop your screenshots into `docs/images/` using the specified filenames.
+
+## 15) Final Checklist (copy/paste)
+- [ ] Firebase project created, billing enabled
+- [ ] Firestore and Auth enabled
+- [ ] Service account JSON downloaded and configured via `GOOGLE_APPLICATION_CREDENTIALS` or `GCP_CREDENTIALS_BASE64`
+- [ ] Speech-to-Text API enabled in Google Cloud
+- [ ] OpenAI API key added to `.env`
+- [ ] ElevenLabs API key and default Voice ID added to `.env`
+- [ ] `ALLOWED_ORIGINS` set for your app(s)
+- [ ] Backend running locally (or containerized) and `/docs` loads
+- [ ] Client sends Firebase ID token in the `Authorization` header
+- [ ] You can: generate syllabus, generate lesson, correct text, transcribe audio, synthesize TTS, hold a voice 1:1 reply
