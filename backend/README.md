@@ -249,3 +249,59 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 # 4) Test health
 curl http://localhost:8000/api/health
 ```
+
+---
+
+## 13) Beginner Quick Guide (Step-by-step like teaching a child)
+
+This is the simplest path. Follow each step in order.
+
+1) Make accounts and get your keys
+- OpenAI: Make an account. Copy your API key. Keep it safe.
+- ElevenLabs: Make an account. Copy your API key. In the ElevenLabs dashboard, pick a voice and copy its Voice ID.
+- Firebase + Google:
+  - Make a Firebase project at `https://console.firebase.google.com`.
+  - Turn on Firestore and Authentication in Firebase.
+  - Go to Google Cloud Console → “Service Accounts”. Create a service account. Make a key (JSON). Download the JSON file. You will use this file soon.
+  - Turn on “Speech-to-Text API” in Google Cloud → APIs & Services.
+
+2) Put keys into the app settings
+- In a terminal, go to the backend folder and copy the sample env file:
+```bash
+cd backend
+cp .env.example .env
+```
+- Open `.env` in a text editor and fill these:
+  - `OPENAI_API_KEY=...` (paste your OpenAI key)
+  - `ELEVENLABS_API_KEY=...` (paste your ElevenLabs key)
+  - `ELEVENLABS_DEFAULT_VOICE_ID=...` (paste your chosen Voice ID)
+  - `GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/service-account.json` (the file you downloaded)
+  - Optionally add your web app origin to `ALLOWED_ORIGINS` (like `http://localhost:3000`)
+
+3) Start the backend server
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+If it worked, your server is running at `http://localhost:8000`.
+
+4) Sign in on your app (to get a token)
+- In your web/mobile app, sign in with Firebase Auth.
+- Copy the Firebase ID token your app gets after login.
+
+5) Try it in the browser demo
+- Open `http://localhost:8000/`
+- Paste your Firebase ID token into the box at the top.
+- Try “Correction”: type a sentence and press “Correct”.
+- Try “Conversation”: type a question and press “Send” (it will speak back).
+- Try “STT”: upload a WAV file and press “Transcribe”.
+
+6) What to do next
+- Use the endpoints from your web/Flutter/native apps (they are standard HTTP routes listed above).
+- Generate a syllabus with `POST /api/syllabus/generate`.
+- Generate a lesson with `POST /api/lessons/generate`.
+- For voice 1:1: send audio to `POST /api/conversation/voice-reply` and play the returned `audio_b64`.
+
+If something goes wrong, scroll up to “Troubleshooting”. It lists the most common fixes in plain words.
