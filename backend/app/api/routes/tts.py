@@ -39,3 +39,15 @@ async def synthesize_tts(payload: TTSPayload, user=Depends(get_current_user)):
 		raise HTTPException(status_code=500, detail=str(re))
 	except Exception:
 		raise HTTPException(status_code=502, detail="TTS provider error")
+
+
+@router.get("/voices")
+async def list_voices(user=Depends(get_current_user)):
+	service = ElevenLabsService()
+	try:
+		voices = await service.list_voices()
+		return voices
+	except RuntimeError as re:
+		raise HTTPException(status_code=500, detail=str(re))
+	except Exception:
+		raise HTTPException(status_code=502, detail="TTS provider error")

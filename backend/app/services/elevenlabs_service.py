@@ -52,3 +52,11 @@ class ElevenLabsService:
 			resp = await client.post(url, headers=headers, json=payload)
 			resp.raise_for_status()
 			return resp.content
+
+	async def list_voices(self) -> dict:
+		headers = self._get_headers(accept="application/json")
+		url = f"{self.BASE_URL}/voices"
+		async with httpx.AsyncClient(timeout=30) as client:
+			resp = await client.get(url, headers=headers)
+			resp.raise_for_status()
+			return resp.json()
