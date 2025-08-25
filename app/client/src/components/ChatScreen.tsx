@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { VoiceCallPanel } from './VoiceCallPanel';
+import { useElevenLabs, type ElevenEvent } from '../elevenlabs/ElevenLabsContext';
 
 type Message = {
   id: string;
@@ -7,14 +8,14 @@ type Message = {
   content: string;
 };
 
-function useChatSocket() {
+function useFallbackChatSocket() {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
   const connect = useMemo(
     () => () => {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return;
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return wsRef.current;
       const ws = new WebSocket('ws://localhost:3001/ws/chat');
       wsRef.current = ws;
       ws.onopen = () => {
@@ -43,12 +44,42 @@ function useChatSocket() {
 export const ChatScreen: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const { connect, connected, error, sendUserMessage } = useChatSocket();
+  const { status: elevenStatus, connect: connectEleven, addListener, removeListener, sendText } = useElevenLabs();
+  const fallback = useFallbackChatSocket();
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
 
+  // Connect ElevenLabs on mount for voice-like experience
   useEffect(() => {
-    const ws = connect();
+    if (elevenStatus === 'idle') {
+      connectEleven();
+    }
+  }, [elevenStatus, connectEleven]);
+
+  // Subscribe to ElevenLabs events for streaming response
+  useEffect(() => {
+    const handler = (evt: ElevenEvent) => {
+      if (evt.type === 'agent_response_delta') {
+        setMessages((prev) => {
+          if (!streamingId) {
+            const id = crypto.randomUUID();
+            setStreamingId(id);
+            return [...prev, { id, role: 'assistant', content: evt.delta }];
+          }
+          return prev.map((m) => (m.id === streamingId ? { ...m, content: m.content + evt.delta } : m));
+        });
+      } else if (evt.type === 'agent_response_done') {
+        setStreamingId(null);
+      }
+    };
+    addListener(handler);
+    return () => removeListener(handler);
+  }, [addListener, removeListener, streamingId]);
+
+  // Fallback local websocket for text-only if ElevenLabs not connected
+  useEffect(() => {
+    if (elevenStatus === 'connected') return;
+    const ws = fallback.connect();
     if (!ws) return;
     ws.onmessage = (evt) => {
       try {
@@ -61,20 +92,16 @@ export const ChatScreen: React.FC = () => {
               setStreamingId(id);
               return [...prev, { id, role: 'assistant', content: data.delta }];
             }
-            return prev.map((m) =>
-              m.id === streamingId ? { ...m, content: m.content + data.delta } : m,
-            );
+            return prev.map((m) => (m.id === streamingId ? { ...m, content: m.content + data.delta } : m));
           });
         } else if (data.type === 'agent_response_done') {
           setStreamingId(null);
-        } else if (data.type === 'error') {
-          console.error(data.error);
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
     };
-  }, [connect, streamingId]);
+  }, [elevenStatus, fallback, streamingId]);
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -87,38 +114,44 @@ export const ChatScreen: React.FC = () => {
     const id = crypto.randomUUID();
     setMessages((m) => [...m, { id, role: 'user', content: text }]);
     setInput('');
-    sendUserMessage(text);
+    if (elevenStatus === 'connected') {
+      sendText(text);
+    } else {
+      fallback.sendUserMessage(text);
+    }
   };
 
+  // Gemini-like layout: centered, wide bubbles, subtle background and typing area
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0b1021' }}>
       <header
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '12px 16px',
-          borderBottom: '1px solid #e5e7eb',
-          background: 'white',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(7, 10, 24, 0.7)',
           position: 'sticky',
           top: 0,
           zIndex: 10,
+          backdropFilter: 'blur(8px)',
         }}
       >
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'white' }}>
           <div
             style={{
               width: 32,
               height: 32,
               borderRadius: 16,
-              background: '#111827',
+              background: 'linear-gradient(135deg, #6ee7f9 0%, #8b5cf6 100%)',
             }}
           />
-          <strong>Assistant</strong>
+          <strong>Gemini-like Assistant</strong>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ fontSize: 12, color: connected ? '#059669' : '#6b7280' }}>
-            {connected ? 'Connected' : 'Disconnected'} {error ? `· ${error}` : ''}
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
+            {elevenStatus === 'connected' ? 'Voice · Connected' : fallback.connected ? 'Text · Connected' : 'Disconnected'}
           </div>
           <VoiceCallPanel />
         </div>
@@ -126,30 +159,35 @@ export const ChatScreen: React.FC = () => {
 
       <div
         ref={listRef}
-        style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#fafafa' }}
+        style={{ flex: 1, overflowY: 'auto', padding: '24px 16px', display: 'flex', justifyContent: 'center' }}
       >
-        {messages.map((m) => (
-          <div key={m.id} style={{ display: 'flex', marginBottom: 12 }}>
-            <div style={{ width: 36 }}>{m.role === 'assistant' ? '🤖' : '🧑'}</div>
-            <div
-              style={{
-                background: m.role === 'assistant' ? 'white' : '#111827',
-                color: m.role === 'assistant' ? '#111827' : 'white',
-                padding: '10px 12px',
-                borderRadius: 12,
-                border: m.role === 'assistant' ? '1px solid #e5e7eb' : 'none',
-                maxWidth: 720,
-                whiteSpace: 'pre-wrap',
-              }}
-            >
-              {m.content}
+        <div style={{ width: '100%', maxWidth: 860 }}>
+          {messages.map((m) => (
+            <div key={m.id} style={{ display: 'flex', marginBottom: 16 }}>
+              <div style={{ width: 36 }}>{m.role === 'assistant' ? '🤖' : '🧑'}</div>
+              <div
+                style={{
+                  background:
+                    m.role === 'assistant'
+                      ? 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)'
+                      : 'linear-gradient(180deg, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.18) 100%)',
+                  color: 'white',
+                  padding: '12px 14px',
+                  borderRadius: 16,
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  maxWidth: 760,
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {m.content}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div style={{ padding: 12, borderTop: '1px solid #e5e7eb', background: 'white' }}>
-        <div style={{ display: 'flex', gap: 8 }}>
+      <div style={{ padding: 16, borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(7, 10, 24, 0.7)', backdropFilter: 'blur(8px)' }}>
+        <div style={{ display: 'flex', gap: 8, maxWidth: 860, margin: '0 auto' }}>
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -159,8 +197,10 @@ export const ChatScreen: React.FC = () => {
             placeholder="Ask anything..."
             style={{
               flex: 1,
-              border: '1px solid #e5e7eb',
-              borderRadius: 12,
+              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'rgba(255,255,255,0.06)',
+              color: 'white',
+              borderRadius: 16,
               padding: '12px 14px',
               outline: 'none',
             }}
