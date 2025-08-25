@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "383985445628",
+    "project_id": "lingua-8e3dc",
+    "storage_bucket": "lingua-8e3dc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383985445628:android:88598cb7bfdae20c068579",
+        "android_client_info": {
+          "package_name": "com.equilib.otolingo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "383985445628-j3coifvc0eh2binhes1p1q1tf8dffm0i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.equilib.otolingo",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "383985445628-v3kck3ubvdl9jojpa89jpj29sibtirah.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.equilib.otolingo",
+            "certificate_hash": "35c0653430a9edd8535acb9459639bb7a773524f"
+          }
+        },
+        {
+          "client_id": "383985445628-u3f69fe5lcjobjkj4ei582fftbc5itm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAodq9Rd1qVeJ_5tXlvXuVB1ft8-Tocbew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "383985445628-u3f69fe5lcjobjkj4ei582fftbc5itm2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "383985445628-rag66h4ap76e32vi83m0nka0knevt6l4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.equilib.otolingo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

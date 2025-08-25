@@ -1,0 +1,67 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "language--app-abd56",
+          "appId": "1:263231511849:android:14878d5a298c94f80e2b38",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "language--app-abd56",
+          "appId": "1:263231511849:ios:a64dd536eb13fb140e2b38",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "language--app-abd56",
+          "appId": "1:263231511849:ios:a64dd536eb13fb140e2b38",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "language--app-abd56",
+          "configurations": {
+            "android": "1:263231511849:android:14878d5a298c94f80e2b38",
+            "ios": "1:263231511849:ios:a64dd536eb13fb140e2b38",
+            "macos": "1:263231511849:ios:a64dd536eb13fb140e2b38",
+            "web": "1:263231511849:web:5f44709f6100930f0e2b38",
+            "windows": "1:263231511849:web:5ffa41bbf4f515160e2b38"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "runtime": "python313"
+    },
+    {
+      "source": "otolingo",
+      "codebase": "otolingobackend",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "runtime": "python313"
+    }
+  ]
+}
