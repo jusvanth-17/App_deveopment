@@ -16,6 +16,35 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true });
 });
 
+// Proxy Gemini Live WebRTC SDP exchange to avoid exposing API key to the client
+// The client sends SDP offer (Content-Type: application/sdp) and receives SDP answer
+app.post('/gemini/connect', express.text({ type: 'application/sdp', limit: '2mb' }), async (req, res) => {
+  try {
+    const model = (req.query.model || process.env.GEMINI_LIVE_MODEL || 'gemini-2.0-flash-live-001').toString();
+    const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'Server missing GOOGLE_API_KEY (or GEMINI_API_KEY)' });
+    }
+
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:connect?key=${encodeURIComponent(apiKey)}`;
+
+    const { data, headers, status } = await axios.post(endpoint, req.body, {
+      headers: { 'Content-Type': 'application/sdp' },
+      responseType: 'text',
+      timeout: 15_000,
+      validateStatus: () => true,
+    });
+
+    // Forward SDP answer as plain text
+    res.status(status);
+    res.setHeader('Content-Type', headers['content-type'] || 'application/sdp');
+    res.send(typeof data === 'string' ? data : String(data || ''));
+  } catch (error) {
+    console.error('gemini/connect error', error?.response?.data || error?.message || error);
+    res.status(500).json({ error: 'Failed to connect to Gemini Live' });
+  }
+});
+
 // Proxy to fetch ElevenLabs signed WebSocket URL without exposing API key to the client
 app.get('/elevenlabs/signed-url', async (req, res) => {
   try {

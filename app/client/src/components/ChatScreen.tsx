@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { VoiceCallPanel } from './VoiceCallPanel';
+import { GeminiVoicePanel } from './GeminiVoicePanel';
 import { useElevenLabs, type ElevenEvent } from '../elevenlabs/ElevenLabsContext';
 
 type Message = {
@@ -154,6 +155,7 @@ export const ChatScreen: React.FC = () => {
             {elevenStatus === 'connected' ? 'Voice · Connected' : fallback.connected ? 'Text · Connected' : 'Disconnected'}
           </div>
           <VoiceCallPanel />
+          <GeminiVoicePanel />
         </div>
       </header>
 
